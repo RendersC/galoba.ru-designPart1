@@ -56,6 +56,24 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('stuck', scrollY > 60);
 }, { passive: true });
 
+/* ── Mobile burger ──────────────────────────────────────── */
+const burger = document.getElementById('navBurger');
+const drawer = document.getElementById('mobileDrawer');
+
+burger.addEventListener('click', () => {
+  const isOpen = drawer.classList.toggle('open');
+  burger.classList.toggle('open', isOpen);
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
+
+drawer.querySelectorAll('.drawer-link, .drawer-login, .drawer-register').forEach(el => {
+  el.addEventListener('click', () => {
+    drawer.classList.remove('open');
+    burger.classList.remove('open');
+    document.body.style.overflow = '';
+  });
+});
+
 /* ── Scroll reveal ──────────────────────────────────────── */
 const srEls = document.querySelectorAll('[data-sr]');
 const srObs = new IntersectionObserver(entries => {

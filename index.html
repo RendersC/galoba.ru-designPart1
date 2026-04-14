@@ -25,15 +25,69 @@
 
 <!-- ══ NAV ════════════════════════════════════════════════ -->
 <nav id="nav">
-  <a href="#" class="logo">galoba<em>.ru</em></a>
+
+  <!-- Logo -->
+  <a href="#" class="logo">
+    <svg class="logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <line x1="14" y1="26" x2="14" y2="7"  stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M6 26 Q14 23 22 26" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      <line x1="3" y1="26" x2="25" y2="26"  stroke="currentColor" stroke-width="2"   stroke-linecap="round"/>
+      <g>
+        <animateTransform attributeName="transform" type="rotate"
+          values="-5 14 7; 5 14 7; -5 14 7" dur="6s"
+          repeatCount="indefinite" calcMode="spline"
+          keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
+        <line x1="3" y1="7" x2="25" y2="7"  stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        <circle cx="14" cy="7" r="2.5" fill="currentColor"/>
+        <!-- left pan -->
+        <line x1="3"  y1="7" x2="3"  y2="16" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.5 2.5" opacity=".8"/>
+        <ellipse cx="3"  cy="18" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.2" fill="none"/>
+        <!-- right pan -->
+        <line x1="25" y1="7" x2="25" y2="16" stroke="currentColor" stroke-width="1.2" stroke-dasharray="2.5 2.5" opacity=".8"/>
+        <ellipse cx="25" cy="18" rx="5" ry="1.8" stroke="currentColor" stroke-width="1.2" fill="none"/>
+      </g>
+    </svg>
+    <span class="logo-text">galoba<em>.ru</em></span>
+  </a>
+
+  <!-- Centre links -->
   <ul class="nav-links">
-    <li><a href="#">О хабе</a></li>
-    <li><a href="#">AI-агент</a></li>
-    <li><a href="#">Как работает</a></li>
-    <li><a href="#">Партнёрам</a></li>
-    <li><a href="#" class="nav-btn">Войти</a></li>
+    <li><a href="#" class="nav-link">О хабе</a></li>
+    <li><a href="#" class="nav-link">AI-агент</a></li>
+    <li><a href="#" class="nav-link">Как работает</a></li>
+    <li><a href="#" class="nav-link">Партнёрам</a></li>
   </ul>
+
+  <!-- Right actions -->
+  <div class="nav-actions">
+    <a href="#" class="nav-login">Войти</a>
+    <a href="#" class="nav-register">Регистрация</a>
+  </div>
+
+  <!-- Burger (mobile) -->
+  <button class="nav-burger" id="navBurger" aria-label="Открыть меню">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
 </nav>
+
+<!-- ══ MOBILE DRAWER ══════════════════════════════════════ -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <div class="drawer-inner">
+    <ul class="drawer-links">
+      <li><a href="#" class="drawer-link">О хабе</a></li>
+      <li><a href="#" class="drawer-link">AI-агент</a></li>
+      <li><a href="#" class="drawer-link">Как работает</a></li>
+      <li><a href="#" class="drawer-link">Партнёрам</a></li>
+    </ul>
+    <div class="drawer-actions">
+      <a href="#" class="drawer-login">Войти</a>
+      <a href="#" class="drawer-register">Зарегистрироваться</a>
+    </div>
+  </div>
+</div>
 
 <!-- ══ HERO ═══════════════════════════════════════════════ -->
 <section class="hero">
