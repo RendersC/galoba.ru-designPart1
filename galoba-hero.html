@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Galoba — Юридический хаб по ЗПП</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Raleway:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lordicon — free animated SVG icons -->
+  <script src="https://cdn.lordicon.com/lordicon.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #03080f;
+      --bg-mid:    #071220;
+      --bg-card:   rgba(5,14,30,0.78);
+      --gold:      #c8a44a;
+      --gold-hi:   #e8c97a;
+      --gold-lo:   rgba(200,164,74,.15);
+      --gold-glow: rgba(200,164,74,.35);
+      --cream:     #f5eedf;
+      --cream-70:  rgba(245,238,223,.70);
+      --cream-45:  rgba(245,238,223,.45);
+      --cream-20:  rgba(245,238,223,.20);
+      --cream-08:  rgba(245,238,223,.08);
+      --cream-04:  rgba(245,238,223,.04);
+      --serif:     'Cormorant Garamond', Georgia, serif;
+      --sans:      'Raleway', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--cream);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+
+    /* ══ STARS canvas ══════════════════════════════════════ */
+    #stars {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══ NAV ═══════════════════════════════════════════════ */
+    nav {
+      position: fixed;
+      inset-block-start: 0;
+      inset-inline: 0;
+      z-index: 400;
+      padding: 28px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: padding .4s ease, background .4s ease, border-color .4s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    nav.stuck {
+      padding: 15px 80px;
+      background: rgba(3,8,15,.92);
+      backdrop-filter: blur(30px) saturate(1.6);
+      border-color: rgba(200,164,74,.13);
+    }
+
+    .logo {
+      font-family: var(--serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      letter-spacing: .06em;
+      text-decoration: none;
+      line-height: 1;
+    }
+    .logo em { font-style: normal; color: var(--cream); font-weight: 300; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 44px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: .66rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--cream-45);
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-btn {
+      font-size: .66rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--gold);
+      padding: 12px 30px;
+      border-radius: 2px;
+      text-decoration: none;
+      transition: background .2s, box-shadow .2s, transform .2s;
+    }
+    .nav-btn:hover {
+      background: var(--gold-hi);
+      box-shadow: 0 6px 28px var(--gold-glow);
+      transform: translateY(-1px);
+    }
+
+    /* ══ HERO ══════════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* ── Courthouse photo bg ── */
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      background:
+        url('courthouse.jpg') center top / cover no-repeat;
+      transform: scale(1.04);
+      transition: transform 8s ease;
+      z-index: 0;
+    }
+    .hero-photo.loaded { transform: scale(1); }
+
+    /* ── Multi-layer overlay ── */
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        /* left: almost opaque for text legibility */
+        linear-gradient(to right,
+          rgba(3,8,15,.97)   0%,
+          rgba(3,8,15,.88)  38%,
+          rgba(3,8,15,.72)  62%,
+          rgba(3,8,15,.50) 100%),
+        /* top/bottom vignette */
+        linear-gradient(to bottom,
+          rgba(3,8,15,.55)  0%,
+          transparent       25%,
+          transparent       75%,
+          rgba(3,8,15,.75) 100%),
+        /* gold warmth tint */
+        linear-gradient(135deg,
+          rgba(200,164,74,.04) 0%,
+          transparent 60%);
+    }
+
+    /* decorative left-side gold veil strip */
+    .hero-veil {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 3px;
+      background: linear-gradient(to bottom,
+        transparent,
+        rgba(200,164,74,.5) 35%,
+        rgba(200,164,74,.8) 50%,
+        rgba(200,164,74,.5) 65%,
+        transparent);
+      z-index: 2;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 3;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      padding: 130px 80px 90px;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ─ Text ─────────────────────────────── */
+    .hero-text { position: relative; }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .eyebrow-line {
+      width: 44px; height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .eyebrow-text {
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 4.4vw, 5.4rem);
+      font-weight: 700;
+      line-height: 1.04;
+      letter-spacing: -.01em;
+      margin-bottom: 28px;
+    }
+    h1 .gold { color: var(--gold); }
+    h1 .thin {
+      display: block;
+      font-style: italic;
+      font-weight: 300;
+      font-size: 76%;
+      color: var(--cream-70);
+      letter-spacing: .02em;
+    }
+
+    .hero-quote {
+      font-family: var(--serif);
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--cream-70);
+      line-height: 1.65;
+      padding-left: 20px;
+      border-left: 2px solid var(--gold);
+      margin-bottom: 20px;
+    }
+
+    .hero-body {
+      font-size: .88rem;
+      font-weight: 400;
+      line-height: 1.9;
+      color: var(--cream-45);
+      margin-bottom: 34px;
+      max-width: 500px;
+    }
+
+    .ai-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      background: rgba(200,164,74,.08);
+      border: 1px solid rgba(200,164,74,.24);
+      border-radius: 100px;
+      padding: 9px 20px 9px 12px;
+      margin-bottom: 36px;
+      backdrop-filter: blur(12px);
+    }
+    .ai-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: ripple 2.2s ease-in-out infinite;
+    }
+    @keyframes ripple {
+      0%   { box-shadow: 0 0 0 0   rgba(200,164,74,.65); }
+      70%  { box-shadow: 0 0 0 10px rgba(200,164,74,0); }
+      100% { box-shadow: 0 0 0 0   rgba(200,164,74,0); }
+    }
+    .ai-tag span {
+      font-size: .64rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold-hi);
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .cta-main {
+      font-size: .74rem;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--gold);
+      padding: 18px 52px;
+      border-radius: 2px;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .cta-main::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg,
+        transparent 25%, rgba(255,255,255,.24) 50%, transparent 75%);
+      transform: translateX(-130%);
+      transition: transform .65s ease;
+    }
+    .cta-main:hover::after { transform: translateX(130%); }
+    .cta-main:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 44px rgba(200,164,74,.42);
+    }
+
+    .cta-ghost {
+      font-size: .74rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cream-45);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      transition: color .2s, gap .22s;
+    }
+    .cta-ghost:hover { color: var(--gold); gap: 16px; }
+
+    /* ─ Scales visual ─────────────────────── */
+    .hero-visual {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* dark vignette behind the entire visual column */
+    .hero-visual::before {
+      content: '';
+      position: absolute;
+      inset: -30%;
+      background: radial-gradient(ellipse at 50% 50%,
+        rgba(3,8,15,.82) 0%,
+        rgba(3,8,15,.55) 45%,
+        transparent 72%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .scales-stage {
+      position: relative;
+      z-index: 2;
+      width: 440px;
+      height: 440px;
+    }
+
+    /* gold glow disc */
+    .scales-stage::before {
+      content: '';
+      position: absolute;
+      inset: 12%;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at 50% 58%,
+        rgba(200,164,74,.16) 0%, transparent 65%);
+      animation: glowPulse 4.5s ease-in-out infinite;
+    }
+    @keyframes glowPulse {
+      0%,100% { opacity: .65; transform: scale(.94); }
+      50%      { opacity: 1;   transform: scale(1.06); }
+    }
+
+    /* orbit rings */
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(200,164,74,.1);
+      pointer-events: none;
+    }
+    .ring-a { inset: 0;   animation: spin 22s linear infinite; }
+    .ring-b { inset: 8%;  animation: spin 38s linear infinite reverse; border-color: rgba(200,164,74,.06); }
+    .ring-c { inset: 16%; animation: spin 55s linear infinite; border-color: rgba(200,164,74,.04); }
+
+    .ring-a::before {
+      content: '';
+      position: absolute;
+      top: -5px; left: 50%;
+      width: 10px; height: 10px;
+      background: var(--gold);
+      border-radius: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 18px 5px var(--gold-glow);
+    }
+    .ring-b::after {
+      content: '';
+      position: absolute;
+      bottom: -4px; right: 10%;
+      width: 7px; height: 7px;
+      background: rgba(200,164,74,.55);
+      border-radius: 50%;
+      box-shadow: 0 0 10px 3px rgba(200,164,74,.3);
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .v-label {
+      position: absolute;
+      font-size: .56rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: rgba(200,164,74,.4);
+      pointer-events: none;
+    }
+    .v-tl { top: 8%; left: 2%; }
+    .v-br { bottom: 8%; right: 2%; text-align: right; }
+
+    .scales-svg {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 18px rgba(200,164,74,.9))
+              drop-shadow(0 0 48px rgba(200,164,74,.45))
+              drop-shadow(0 4px 20px rgba(0,0,0,.8));
+    }
+
+    /* ══ CARDS ═════════════════════════════════════════════ */
+    .section-cards {
+      position: relative;
+      z-index: 2;
+      padding: 0 80px 100px;
+    }
+
+    .cards-wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      background: rgba(200,164,74,.1);
+      border: 1px solid rgba(200,164,74,.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(28px) saturate(1.4);
+      padding: 52px 38px;
+      position: relative;
+      overflow: hidden;
+      transition: background .35s;
+    }
+
+    /* shimmer top line */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .45s ease;
+    }
+    /* bottom glow */
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: -80%; left: 50%;
+      transform: translateX(-50%);
+      width: 80%; height: 80%;
+      background: radial-gradient(ellipse, rgba(200,164,74,.07) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity .4s;
+      pointer-events: none;
+    }
+    .card:hover { background: rgba(8,22,48,.88); }
+    .card:hover::before { transform: scaleX(1); }
+    .card:hover::after  { opacity: 1; }
+
+    .card-num {
+      font-family: var(--serif);
+      font-size: 4.5rem;
+      font-weight: 700;
+      color: rgba(200,164,74,.09);
+      line-height: 1;
+      margin-bottom: 22px;
+      transition: color .3s;
+    }
+    .card:hover .card-num { color: rgba(200,164,74,.18); }
+
+    /* Lordicon icon area */
+    .card-icon {
+      width: 52px; height: 52px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    /* Fallback SVG icon (if lordicon fails) */
+    .card-icon svg {
+      width: 44px; height: 44px;
+      color: var(--gold);
+    }
+
+    .card-title {
+      font-family: var(--serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 14px;
+    }
+
+    .card-text {
+      font-size: .84rem;
+      font-weight: 400;
+      line-height: 1.85;
+      color: var(--cream-45);
+    }
+
+    .card-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 28px;
+      font-size: .61rem;
+      font-weight: 700;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(200,164,74,.28);
+      padding: 6px 14px;
+      border-radius: 2px;
+    }
+    .card-pill::before {
+      content: '';
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ══ QUOTE ═════════════════════════════════════════════ */
+    .section-quote {
+      position: relative;
+      z-index: 2;
+      overflow: hidden;
+    }
+
+    /* photo strip behind quote */
+    .quote-photo {
+      position: absolute;
+      inset: 0;
+      background: url('courthouse.jpg') center 40% / cover no-repeat;
+      z-index: 0;
+    }
+
+    .quote-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right,
+          rgba(3,8,15,.96) 0%,
+          rgba(3,8,15,.82) 40%,
+          rgba(3,8,15,.82) 60%,
+          rgba(3,8,15,.96) 100%),
+        linear-gradient(to bottom,
+          rgba(3,8,15,.7) 0%,
+          rgba(3,8,15,.3) 40%,
+          rgba(3,8,15,.3) 60%,
+          rgba(3,8,15,.7) 100%);
+      z-index: 1;
+    }
+
+    .quote-inner {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 100px 80px;
+    }
+
+    .quote-inner::before,
+    .quote-inner::after {
+      content: '';
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(to right,
+        transparent,
+        rgba(200,164,74,.2) 30%,
+        rgba(200,164,74,.4) 50%,
+        rgba(200,164,74,.2) 70%,
+        transparent);
+    }
+    .quote-inner::before { top: 0; }
+    .quote-inner::after  { bottom: 0; }
+
+    .q-glyph {
+      font-family: var(--serif);
+      font-size: 14rem;
+      font-weight: 700;
+      line-height: .7;
+      color: rgba(200,164,74,.07);
+      position: absolute;
+      top: 16px; left: 72px;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .q-main {
+      font-family: var(--serif);
+      font-size: clamp(1.7rem, 2.6vw, 2.7rem);
+      font-weight: 600;
+      font-style: italic;
+      line-height: 1.35;
+      max-width: 900px;
+      margin: 0 auto 30px;
+    }
+
+    .q-divider {
+      width: 60px; height: 1px;
+      background: var(--gold);
+      margin: 0 auto 24px;
+    }
+
+    .q-source {
+      font-size: .65rem;
+      font-weight: 700;
+      letter-spacing: .24em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ══ STATS ═════════════════════════════════════════════ */
+    .section-stats {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+    }
+
+    .stat {
+      padding: 46px 44px;
+      text-align: center;
+      border-top: 1px solid rgba(200,164,74,.1);
+      border-right: 1px solid rgba(200,164,74,.1);
+      position: relative;
+      overflow: hidden;
+      transition: background .3s;
+    }
+    .stat:last-child { border-right: none; }
+    .stat::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 110%,
+        rgba(200,164,74,.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .stat:hover { background: rgba(200,164,74,.025); }
+    .stat:hover::before { opacity: 1; }
+
+    .stat-val {
+      font-family: var(--serif);
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+
+    .stat-lbl {
+      font-size: .67rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cream-45);
+      line-height: 1.5;
+    }
+
+    /* ══ FOOTER ════════════════════════════════════════════ */
+    footer {
+      position: relative;
+      z-index: 2;
+      background: rgba(3,8,15,.85);
+      border-top: 1px solid rgba(200,164,74,.08);
+      padding: 26px 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: .64rem;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(245,238,223,.28);
+    }
+    footer a { color: var(--gold); text-decoration: none; }
+
+    /* ══ SCROLL REVEAL ═════════════════════════════════════ */
+    [data-sr] {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity .75s ease, transform .75s ease;
+    }
+    [data-sr].in { opacity: 1; transform: none; }
+
+    /* ══ RESPONSIVE ════════════════════════════════════════ */
+    @media (max-width: 1060px) {
+      nav, nav.stuck { padding: 16px 28px; }
+      .nav-links { display: none; }
+      .hero-inner { grid-template-columns: 1fr; padding: 120px 28px 80px; gap: 48px; }
+      .hero-visual { order: -1; }
+      .scales-stage { width: 280px; height: 280px; }
+      .section-cards { padding: 0 28px 70px; }
+      .cards-wrap { grid-template-columns: 1fr; }
+      .section-quote .quote-inner { padding: 70px 28px; }
+      .q-glyph { font-size: 8rem; left: 24px; }
+      .section-stats { grid-template-columns: 1fr 1fr; }
+      .stat:nth-child(2) { border-right: none; }
+      .stat:nth-child(3) { border-right: 1px solid rgba(200,164,74,.1); }
+      footer { padding: 20px 28px; flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<!-- ══ NAV ════════════════════════════════════════════════ -->
+<nav id="nav">
+  <a href="#" class="logo">galoba<em>.ru</em></a>
+  <ul class="nav-links">
+    <li><a href="#">О хабе</a></li>
+    <li><a href="#">AI-агент</a></li>
+    <li><a href="#">Как работает</a></li>
+    <li><a href="#">Партнёрам</a></li>
+    <li><a href="#" class="nav-btn">Войти</a></li>
+  </ul>
+</nav>
+
+<!-- ══ HERO ═══════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-photo" id="heroPhoto"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-veil"></div>
+
+  <div class="hero-inner">
+
+    <!-- text -->
+    <div class="hero-text">
+      <div class="eyebrow" id="g-ey">
+        <div class="eyebrow-line"></div>
+        <span class="eyebrow-text">Общество потребителей «Диалог»</span>
+      </div>
+
+      <h1 id="g-h1">
+        Подавайте иски
+        <span class="gold"> сильнее.</span>
+        <span class="thin">Зарабатывайте больше.</span>
+      </h1>
+
+      <p class="hero-quote" id="g-bq">
+        Юридический хаб для адвокатов и юристов,<br />
+        работающих по защите прав потребителей.
+      </p>
+
+      <p class="hero-body" id="g-bd">
+        Мы берём техническую рутину на себя — проверим иск и весь пакет документов за&nbsp;3&nbsp;часа и подадим в суд. Вы даёте клиентам процессуальные льготы и получаете личный бонус с каждого выигранного дела по&nbsp;ст.&nbsp;13&nbsp;ЗПП.
+      </p>
+
+      <div class="ai-tag" id="g-ai">
+        <div class="ai-dot"></div>
+        <span>AI-агент: иск · судпрактика · проверка · напоминание · расчёт бонуса</span>
+      </div>
+
+      <div class="cta-row" id="g-cta">
+        <a href="#" class="cta-main">Зарегистрироваться на хабе</a>
+        <a href="#" class="cta-ghost">
+          Как это работает
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- scales -->
+    <div class="hero-visual" id="g-vis">
+      <div class="scales-stage">
+        <div class="ring ring-a"></div>
+        <div class="ring ring-b"></div>
+        <div class="ring ring-c"></div>
+        <span class="v-label v-tl">Закон о ЗПП</span>
+        <span class="v-label v-br">Ст.&nbsp;13 · Штраф</span>
+
+        <svg class="scales-svg" viewBox="0 0 300 340"
+             fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- bg circles -->
+          <circle cx="150" cy="165" r="148" stroke="rgba(200,164,74,.04)" stroke-width="1"/>
+          <circle cx="150" cy="165" r="122" stroke="rgba(200,164,74,.05)" stroke-width="1"/>
+          <circle cx="150" cy="165" r="96"  stroke="rgba(200,164,74,.035)" stroke-width=".8"/>
+
+          <!-- pillar -->
+          <line x1="150" y1="308" x2="150" y2="96"
+                stroke="#c8a44a" stroke-width="2.4" stroke-linecap="round"/>
+
+          <!-- base -->
+          <path d="M90 308 Q150 297 210 308"
+                stroke="#c8a44a" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <line x1="78" y1="316" x2="222" y2="316"
+                stroke="#c8a44a" stroke-width="3.2" stroke-linecap="round"/>
+          <circle cx="78"  cy="316" r="3.5" fill="#c8a44a" opacity=".6"/>
+          <circle cx="222" cy="316" r="3.5" fill="#c8a44a" opacity=".6"/>
+
+          <!-- ANIMATED BEAM (SMIL) -->
+          <g>
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              values="-6 150 96; 6 150 96; -6 150 96"
+              dur="6s"
+              repeatCount="indefinite"
+              calcMode="spline"
+              keySplines="0.42 0 0.58 1; 0.42 0 0.58 1"/>
+
+            <!-- beam bar -->
+            <line x1="28" y1="96" x2="272" y2="96"
+                  stroke="#c8a44a" stroke-width="2.4" stroke-linecap="round"/>
+
+            <!-- pivot cap -->
+            <circle cx="150" cy="96" r="10"
+                    fill="#07121e" stroke="#c8a44a" stroke-width="2.2"/>
+            <circle cx="150" cy="96" r="4.5" fill="#c8a44a"/>
+            <!-- pivot glow -->
+            <circle cx="150" cy="96" r="10"
+                    fill="none" stroke="rgba(200,164,74,.35)" stroke-width="5"
+                    style="filter:blur(4px)"/>
+
+            <!-- LEFT arm endpoint -->
+            <circle cx="28" cy="96" r="5" fill="#c8a44a" opacity=".7"/>
+
+            <!-- LEFT chain -->
+            <line x1="28" y1="101" x2="28" y2="183"
+                  stroke="#c8a44a" stroke-width="1.4"
+                  stroke-dasharray="4 5" opacity=".75"/>
+
+            <!-- LEFT pan body -->
+            <path d="M-16 196 Q28 188 72 196 Q28 204 -16 196 Z"
+                  fill="rgba(200,164,74,.1)" stroke="#c8a44a" stroke-width="1.3"/>
+            <!-- left pan rim glow -->
+            <ellipse cx="28" cy="196" rx="44" ry="9"
+                     stroke="rgba(200,164,74,.3)" stroke-width="4" fill="none"
+                     style="filter:blur(4px)"/>
+            <!-- left pan hard rim -->
+            <ellipse cx="28" cy="196" rx="44" ry="9"
+                     stroke="#c8a44a" stroke-width="1.4" fill="none"/>
+
+            <!-- RIGHT arm endpoint -->
+            <circle cx="272" cy="96" r="5" fill="#c8a44a" opacity=".7"/>
+
+            <!-- RIGHT chain -->
+            <line x1="272" y1="101" x2="272" y2="183"
+                  stroke="#c8a44a" stroke-width="1.4"
+                  stroke-dasharray="4 5" opacity=".75"/>
+
+            <!-- RIGHT pan body -->
+            <path d="M228 196 Q272 188 316 196 Q272 204 228 196 Z"
+                  fill="rgba(200,164,74,.1)" stroke="#c8a44a" stroke-width="1.3"/>
+            <ellipse cx="272" cy="196" rx="44" ry="9"
+                     stroke="rgba(200,164,74,.3)" stroke-width="4" fill="none"
+                     style="filter:blur(4px)"/>
+            <ellipse cx="272" cy="196" rx="44" ry="9"
+                     stroke="#c8a44a" stroke-width="1.4" fill="none"/>
+          </g>
+
+          <!-- scattered accent dots -->
+          <circle cx="150" cy="20"  r="3"   fill="#c8a44a" opacity=".4"/>
+          <circle cx="22"  cy="150" r="2"   fill="#c8a44a" opacity=".22"/>
+          <circle cx="278" cy="150" r="2"   fill="#c8a44a" opacity=".22"/>
+          <circle cx="55"  cy="52"  r="1.8" fill="#c8a44a" opacity=".18"/>
+          <circle cx="245" cy="52"  r="1.8" fill="#c8a44a" opacity=".18"/>
+          <circle cx="55"  cy="278" r="1.5" fill="#c8a44a" opacity=".14"/>
+          <circle cx="245" cy="278" r="1.5" fill="#c8a44a" opacity=".14"/>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ CARDS ═══════════════════════════════════════════════ -->
+<section class="section-cards">
+  <div class="cards-wrap">
+
+    <!-- Card 1 -->
+    <div class="card" data-sr>
+      <div class="card-num">01</div>
+      <div class="card-icon">
+        <!-- Lordicon: document check. Fallback = inline SVG -->
+        <lord-icon
+          src="https://cdn.lordicon.com/wloilxuq.json"
+          trigger="hover"
+          colors="primary:#c8a44a,secondary:#e8c97a"
+          style="width:52px;height:52px">
+        </lord-icon>
+      </div>
+      <div class="card-title">Техническая разгрузка за 3 часа</div>
+      <div class="card-text">
+        Проверяем подсудность, полноту доказательств, корректность расчёта неустойки и компенсации, все ссылки на нормы ЗПП и ГК РФ. Результат — юридически выверенный документ, готовый к подаче.
+      </div>
+      <span class="card-pill">Проверка и подача</span>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-sr style="transition-delay:.13s">
+      <div class="card-num">02</div>
+      <div class="card-icon">
+        <lord-icon
+          src="https://cdn.lordicon.com/lupuorrc.json"
+          trigger="hover"
+          colors="primary:#c8a44a,secondary:#e8c97a"
+          style="width:52px;height:52px">
+        </lord-icon>
+      </div>
+      <div class="card-title">Процессуальные льготы для клиентов</div>
+      <div class="card-text">
+        Как общество потребителей обеспечиваем освобождение от госпошлины, возмещение расходов на экспертизу и судебные издержки в рамках ЗПП — без дополнительных затрат для доверителя.
+      </div>
+      <span class="card-pill">Льготы по ЗПП</span>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-sr style="transition-delay:.26s">
+      <div class="card-num">03</div>
+      <div class="card-icon">
+        <lord-icon
+          src="https://cdn.lordicon.com/qhviklyi.json"
+          trigger="hover"
+          colors="primary:#c8a44a,secondary:#e8c97a"
+          style="width:52px;height:52px">
+        </lord-icon>
+      </div>
+      <div class="card-title">Личный бонус с каждого выигранного дела</div>
+      <div class="card-text">
+        По ст.&nbsp;13 ЗПП суд взыскивает штраф в пользу общества. Часть этого дохода мы передаём вам лично как партнёру, который привёл дело и работал по нему.
+      </div>
+      <span class="card-pill">Ст. 13 ЗПП</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ QUOTE (фото-полоса) ══════════════════════════════════ -->
+<div class="section-quote" data-sr>
+  <div class="quote-photo"></div>
+  <div class="quote-photo-overlay"></div>
+  <div class="quote-inner">
+    <span class="q-glyph" aria-hidden="true">"</span>
+    <p class="q-main">
+      Мы не конкуренты.<br />
+      Мы&nbsp;— ваш надёжный партнёр и операционный тыл.
+    </p>
+    <div class="q-divider"></div>
+    <span class="q-source">Общество потребителей «Диалог» · galoba.ru</span>
+  </div>
+</div>
+
+<!-- ══ STATS ════════════════════════════════════════════════ -->
+<div class="section-stats">
+  <div class="stat" data-sr>
+    <div class="stat-val">3 ч</div>
+    <div class="stat-lbl">Проверка иска<br/>и заключение</div>
+  </div>
+  <div class="stat" data-sr style="transition-delay:.08s">
+    <div class="stat-val">0 ₽</div>
+    <div class="stat-lbl">Госпошлина<br/>для клиента</div>
+  </div>
+  <div class="stat" data-sr style="transition-delay:.16s">
+    <div class="stat-val">50%</div>
+    <div class="stat-lbl">Штраф по<br/>ст. 13 ЗПП</div>
+  </div>
+  <div class="stat" data-sr style="transition-delay:.24s">
+    <div class="stat-val">ИИ</div>
+    <div class="stat-lbl">Агент для иска<br/>и документов</div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════ -->
+<footer>
+  <span>© 2025 galoba.ru · Общество потребителей «Диалог»</span>
+  <span>
+    <a href="#">Конфиденциальность</a>&nbsp;·&nbsp;<a href="#">info@galoba.ru</a>
+  </span>
+</footer>
+
+<!-- ══ SCRIPTS ══════════════════════════════════════════════ -->
+<script>
+/* ── Stars ──────────────────────────────────────────────── */
+(function(){
+  const c = document.getElementById('stars');
+  const x = c.getContext('2d');
+  let p = [];
+
+  function resize(){ c.width = innerWidth; c.height = innerHeight; }
+  resize();
+  addEventListener('resize', () => { resize(); init(); });
+
+  function init(){
+    p = [];
+    const n = Math.round(innerWidth * innerHeight / 11000);
+    for(let i=0;i<n;i++){
+      p.push({
+        x: Math.random()*c.width,
+        y: Math.random()*c.height,
+        r: Math.random()*1.2+.2,
+        vx:(Math.random()-.5)*.2,
+        vy:(Math.random()-.5)*.2,
+        a: Math.random()*.4+.08,
+        g: Math.random()>.7
+      });
+    }
+  }
+  init();
+
+  function draw(){
+    x.clearRect(0,0,c.width,c.height);
+    for(const d of p){
+      x.beginPath();
+      x.arc(d.x,d.y,d.r,0,Math.PI*2);
+      x.fillStyle = d.g
+        ? `rgba(200,164,74,${d.a})`
+        : `rgba(190,210,245,${d.a*.5})`;
+      x.fill();
+      d.x=(d.x+d.vx+c.width )%c.width;
+      d.y=(d.y+d.vy+c.height)%c.height;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Photo parallax ─────────────────────────────────────── */
+const heroPhoto = document.getElementById('heroPhoto');
+// Trigger the slow zoom-out on load
+setTimeout(() => heroPhoto.classList.add('loaded'), 100);
+
+// Subtle parallax on scroll
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  heroPhoto.style.transform = `scale(1) translateY(${y * 0.28}px)`;
+}, { passive: true });
+
+/* ── Sticky nav ─────────────────────────────────────────── */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('stuck', scrollY > 60);
+}, { passive: true });
+
+/* ── Scroll reveal ──────────────────────────────────────── */
+const srEls = document.querySelectorAll('[data-sr]');
+const srObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      srObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.09 });
+srEls.forEach(el => srObs.observe(el));
+
+/* ── GSAP hero entrance ─────────────────────────────────── */
+function heroIn(){
+  const ids = ['#g-ey','#g-h1','#g-bq','#g-bd','#g-ai','#g-cta'];
+  if(typeof gsap === 'undefined'){
+    [...ids, '#g-vis'].forEach(s => {
+      const el = document.querySelector(s);
+      if(el){ el.style.opacity='1'; el.style.transform='none'; }
+    });
+    return;
+  }
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.set(ids, { opacity:0, y:30 });
+  gsap.set('#g-vis', { opacity:0, x:45 });
+
+  const tl = gsap.timeline({ defaults:{ ease:'power3.out' } });
+  tl.to('#g-ey',  { opacity:1, y:0, duration:.65 }, .2)
+    .to('#g-h1',  { opacity:1, y:0, duration:.75 }, .35)
+    .to('#g-bq',  { opacity:1, y:0, duration:.6  }, .52)
+    .to('#g-bd',  { opacity:1, y:0, duration:.6  }, .64)
+    .to('#g-ai',  { opacity:1, y:0, duration:.5  }, .77)
+    .to('#g-cta', { opacity:1, y:0, duration:.5  }, .87)
+    .to('#g-vis', { opacity:1, x:0, duration:.9, ease:'power2.out' }, .3);
+}
+
+if(document.readyState==='complete'){ heroIn(); }
+else { window.addEventListener('load', heroIn); }
+</script>
+
+</body>
+</html>
